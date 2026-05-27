@@ -2,7 +2,6 @@ using System.Globalization;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using Microsoft.Win32;
 using H.NotifyIcon; // BitmapSource.ToStream() (PNG -> ICO)
 
 namespace ClaudeStatus;
@@ -23,7 +22,7 @@ public static class IconRenderer
     {
         string text = utilization is { } u ? FormatPercent(u) : "?";
 
-        var brush = new SolidColorBrush(IsLightTaskbar() ? DarkInk : Colors.White);
+        var brush = new SolidColorBrush(ThemeManager.IsLightSystem() ? DarkInk : Colors.White);
         brush.Freeze();
 
         var visual = new DrawingVisual();
@@ -51,21 +50,6 @@ public static class IconRenderer
         // to an .ico stream and wrap it in a GDI+ Icon.
         using var icoStream = bmp.ToStream();
         return new System.Drawing.Icon(icoStream);
-    }
-
-    /// <summary>True when the taskbar uses the light theme (so we draw dark text).</summary>
-    private static bool IsLightTaskbar()
-    {
-        try
-        {
-            using var key = Registry.CurrentUser.OpenSubKey(
-                @"Software\Microsoft\Windows\CurrentVersion\Themes\Personalize");
-            return key?.GetValue("SystemUsesLightTheme") is int v && v != 0;
-        }
-        catch
-        {
-            return false; // assume dark taskbar -> white text
-        }
     }
 
     private static string FormatPercent(double u)

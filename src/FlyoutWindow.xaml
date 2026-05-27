@@ -16,24 +16,24 @@
     <!-- Outer margin leaves room for the drop shadow. -->
     <Border Margin="12"
             CornerRadius="12"
-            Background="#FF1B1D22"
-            BorderBrush="#FF2C2F38"
+            Background="{DynamicResource SurfaceBrush}"
+            BorderBrush="{DynamicResource SurfaceBorderBrush}"
             BorderThickness="1">
         <Border.Effect>
-            <DropShadowEffect BlurRadius="22" ShadowDepth="3" Opacity="0.55" Color="Black" />
+            <DropShadowEffect BlurRadius="22" ShadowDepth="3" Opacity="0.4" Color="Black" />
         </Border.Effect>
 
         <StackPanel Margin="16,14,16,16">
             <!-- Header -->
             <Grid>
                 <TextBlock Text="Claude usage"
-                           Foreground="#FFF2F3F5"
+                           Foreground="{DynamicResource TextPrimaryBrush}"
                            FontSize="14"
                            FontWeight="SemiBold" />
                 <TextBlock x:Name="UpdatedText"
                            HorizontalAlignment="Right"
                            VerticalAlignment="Center"
-                           Foreground="#FF8A8F98"
+                           Foreground="{DynamicResource TextSecondaryBrush}"
                            FontSize="11" />
             </Grid>
 
@@ -44,11 +44,11 @@
                         <StackPanel Margin="0,12,0,0">
                             <Grid>
                                 <TextBlock Text="{Binding Name}"
-                                           Foreground="#FFE3E5E8"
+                                           Foreground="{DynamicResource TextPrimaryBrush}"
                                            FontSize="12.5" />
                                 <TextBlock Text="{Binding PercentText}"
                                            HorizontalAlignment="Right"
-                                           Foreground="#FFF2F3F5"
+                                           Foreground="{DynamicResource TextPrimaryBrush}"
                                            FontSize="12.5"
                                            FontWeight="SemiBold" />
                             </Grid>
@@ -57,7 +57,7 @@
                                     Width="288"
                                     HorizontalAlignment="Left"
                                     CornerRadius="4"
-                                    Background="#22FFFFFF"
+                                    Background="{DynamicResource TrackBrush}"
                                     Margin="0,6,0,0">
                                 <Border HorizontalAlignment="Left"
                                         CornerRadius="4"
@@ -65,7 +65,7 @@
                                         Background="{Binding FillBrush}" />
                             </Border>
                             <TextBlock Text="{Binding ResetText}"
-                                       Foreground="#FF8A8F98"
+                                       Foreground="{DynamicResource TextSecondaryBrush}"
                                        FontSize="11"
                                        Margin="0,4,0,0" />
                         </StackPanel>
@@ -75,7 +75,7 @@
 
             <!-- Status / error line (hidden when there is data) -->
             <TextBlock x:Name="MessageText"
-                       Foreground="#FFB0B4BB"
+                       Foreground="{DynamicResource TextSecondaryBrush}"
                        FontSize="12"
                        TextWrapping="Wrap"
                        Margin="0,12,0,0"

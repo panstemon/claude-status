@@ -19,6 +19,7 @@ public partial class App : Application
     private readonly List<(MenuItem Item, int Seconds)> _intervalItems = new();
     private readonly List<(MenuItem Item, BadgeSource Source)> _badgeItems = new();
     private UsageSnapshot? _lastSnapshot;
+    private ResourceDictionary? _colorTheme;
 
     protected override void OnStartup(StartupEventArgs e)
     {
@@ -34,6 +35,7 @@ public partial class App : Application
         }
 
         _settings = AppSettings.Load();
+        ApplyColorTheme();
         _client = new UsageClient();
         _flyout = new FlyoutWindow();
 
@@ -223,7 +225,24 @@ public partial class App : Application
     private void OnUserPreferenceChanged(object? sender, UserPreferenceChangedEventArgs e)
     {
         if (e.Category == UserPreferenceCategory.General)
-            Dispatcher.Invoke(UpdateBadge);
+            Dispatcher.Invoke(() =>
+            {
+                ApplyColorTheme();
+                UpdateBadge();
+            });
+    }
+
+    /// <summary>Merge the light or dark palette to match the current Windows app theme.</summary>
+    private void ApplyColorTheme()
+    {
+        var file = ThemeManager.IsLightApp() ? "Theme.Light.xaml" : "Theme.Dark.xaml";
+        var uri = new Uri($"pack://application:,,,/{file}", UriKind.Absolute);
+        var dict = new ResourceDictionary { Source = uri };
+
+        if (_colorTheme is not null)
+            Resources.MergedDictionaries.Remove(_colorTheme);
+        Resources.MergedDictionaries.Add(dict);
+        _colorTheme = dict;
     }
 
     protected override void OnExit(ExitEventArgs e)

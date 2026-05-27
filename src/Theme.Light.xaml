@@ -1,0 +1,13 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!-- Light theme palette for the flyout and context menu -->
+    <SolidColorBrush x:Key="SurfaceBrush" Color="#FFFAFAFC" />
+    <SolidColorBrush x:Key="SurfaceBorderBrush" Color="#FFE2E3E8" />
+    <SolidColorBrush x:Key="TextPrimaryBrush" Color="#FF1B1D22" />
+    <SolidColorBrush x:Key="TextSecondaryBrush" Color="#FF6B7280" />
+    <SolidColorBrush x:Key="TrackBrush" Color="#18000000" />
+    <SolidColorBrush x:Key="HoverBrush" Color="#FFEAECEF" />
+    <SolidColorBrush x:Key="DisabledBrush" Color="#FFAAAEB5" />
+
+</ResourceDictionary>
