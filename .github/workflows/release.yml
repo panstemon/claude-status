@@ -1,0 +1,45 @@
+name: Release
+
+# Build and publish a release whenever a vX.Y.Z tag is pushed.
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up .NET 10
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Publish single-file exe (framework-dependent)
+        run: >
+          dotnet publish src -c Release -r win-x64 --self-contained false
+          -p:PublishSingleFile=true -o release
+
+      - name: Create GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: Claude Status ${{ github.ref_name }}
+          files: release/ClaudeStatus.exe
+          body: |
+            **Claude Status** — a Windows tray app that shows your live Claude subscription limits (5-hour, weekly, and per-model windows), the same numbers as Claude Code's `/usage`.
+
+            ### Install
+            1. Install the [.NET 10 Desktop Runtime](https://dotnet.microsoft.com/download/dotnet/10.0) (x64) — or run `winget install Microsoft.DotNet.DesktopRuntime.10`.
+            2. Download **`ClaudeStatus.exe`** below and run it.
+            3. SmartScreen may warn about an unknown publisher (the app is unsigned): click **More info → Run anyway**.
+            4. Right-click the tray badge → **Start with Windows** to launch it at login.
+
+            Requires Windows 10/11 (x64), the .NET 10 Desktop Runtime, and a Claude.ai subscription already signed in via [Claude Code](https://claude.com/claude-code).
+
+            ---
+            Unofficial; not affiliated with or endorsed by Anthropic. The usage endpoint is undocumented and may change.

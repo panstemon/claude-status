@@ -27,15 +27,17 @@ Code's `/usage`.
 
 ## Download
 
-1. Download the latest **`ClaudeStatus.exe`** from the
+1. **Install the [.NET 10 Desktop Runtime](https://dotnet.microsoft.com/download/dotnet/10.0) (x64)**
+   if you don't already have it — or run `winget install Microsoft.DotNet.DesktopRuntime.10`.
+2. Download the latest **`ClaudeStatus.exe`** (~1 MB) from the
    [**Releases**](https://github.com/panstemon/claude-status/releases/latest) page.
-2. Run it. The release build is self-contained — **no .NET install required**.
-3. On first launch Windows SmartScreen may warn about an unknown publisher
+3. Run it. On first launch Windows SmartScreen may warn about an unknown publisher
    (the app is unsigned): click **More info → Run anyway**.
 4. Right-click the tray badge → **Start with Windows** to have it launch at login.
 
-> Requires Windows 10/11 (x64) and a Claude.ai subscription already signed in via
-> [Claude Code](https://claude.com/claude-code) (that's where the credentials come from).
+> Requires Windows 10/11 (x64), the **.NET 10 Desktop Runtime**, and a Claude.ai
+> subscription already signed in via [Claude Code](https://claude.com/claude-code)
+> (that's where the credentials come from).
 
 ## How it works
 
@@ -59,10 +61,9 @@ Requires the [.NET 10 SDK](https://dotnet.microsoft.com/download).
 # run directly
 dotnet run --project src
 
-# build the self-contained single-file exe that ships in releases
-dotnet publish src -c Release -r win-x64 --self-contained true `
-  -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true `
-  -p:EnableCompressionInSingleFile=true -o release
+# build the single-file exe that ships in releases
+# (framework-dependent: needs the .NET 10 Desktop Runtime to run)
+dotnet publish src -c Release -r win-x64 --self-contained false -p:PublishSingleFile=true -o release
 ```
 
 ## Project layout
