@@ -15,6 +15,12 @@ Code's `/usage`.
   already stores, and **refreshes it itself** so the tray keeps working even when
   Claude Code isn't running.
 
+<p>
+  <img src="docs/flyout.png" alt="status flyout" height="300" />
+  &nbsp;
+  <img src="docs/menu.png" alt="right-click menu" height="300" />
+</p>
+
 ## How it works
 
 | Piece | Detail |
