@@ -29,16 +29,21 @@ public static class IconRenderer
         var visual = new DrawingVisual();
         using (var dc = visual.RenderOpen())
         {
-            var rect = new Rect(2, 2, Size - 4, Size - 4);
-            dc.DrawRoundedRectangle(new SolidColorBrush(fill), null, rect, 14, 14);
+            var rect = new Rect(1, 1, Size - 2, Size - 2);
+            dc.DrawRoundedRectangle(new SolidColorBrush(fill), null, rect, 13, 13);
 
             var typeface = new Typeface(new FontFamily("Segoe UI"),
                 FontStyles.Normal, FontWeights.Bold, FontStretches.Normal);
 
-            // Shrink font as the number grows so "100" still fits.
-            double fontSize = text.Length >= 3 ? 30 : 38;
+            // Solid dark numerals: high contrast on the clay/red fill and crisp
+            // even when the icon is shown at 16px in the tray.
+            var ink = new SolidColorBrush(Color.FromRgb(0x16, 0x18, 0x1C));
+            ink.Freeze();
+
+            // Shrink the font as the number grows so "100" still fits.
+            double fontSize = text.Length >= 3 ? 36 : 48;
             var formatted = new FormattedText(text, CultureInfo.InvariantCulture,
-                FlowDirection.LeftToRight, typeface, fontSize, Brushes.White, 1.0);
+                FlowDirection.LeftToRight, typeface, fontSize, ink, 1.0);
 
             var origin = new Point(
                 (Size - formatted.Width) / 2,
