@@ -6,6 +6,7 @@ obj/
 
 # Build output
 publish/
+release/
 *.exe.config
 
 # Rider / VS
