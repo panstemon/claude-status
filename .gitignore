@@ -1,0 +1,17 @@
+# .NET
+bin/
+obj/
+*.user
+.vs/
+
+# Build output
+publish/
+*.exe.config
+
+# Rider / VS
+.idea/
+*.suo
+
+# OS
+Thumbs.db
+desktop.ini
