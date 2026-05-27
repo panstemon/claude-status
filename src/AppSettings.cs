@@ -4,10 +4,21 @@ using System.Text.Json.Serialization;
 
 namespace ClaudeStatus;
 
+/// <summary>Which limit window the tray badge number reflects.</summary>
+[JsonConverter(typeof(JsonStringEnumConverter))]
+public enum BadgeSource
+{
+    /// <summary>The most-constrained window across all of them.</summary>
+    Highest,
+    FiveHour,
+    Weekly,
+}
+
 /// <summary>User-tunable settings persisted to %APPDATA%\ClaudeStatus\settings.json.</summary>
 public sealed class AppSettings
 {
     public int PollIntervalSeconds { get; set; } = 60;
+    public BadgeSource BadgeSource { get; set; } = BadgeSource.Highest;
 
     [JsonIgnore]
     public static string Dir => Path.Combine(

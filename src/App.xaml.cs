@@ -16,6 +16,8 @@ public partial class App : Application
 
     private MenuItem? _autostartItem;
     private readonly List<(MenuItem Item, int Seconds)> _intervalItems = new();
+    private readonly List<(MenuItem Item, BadgeSource Source)> _badgeItems = new();
+    private UsageSnapshot? _lastSnapshot;
 
     protected override void OnStartup(StartupEventArgs e)
     {
@@ -75,13 +77,29 @@ public partial class App : Application
 
     private void ApplySnapshot(UsageSnapshot snapshot)
     {
+        _lastSnapshot = snapshot;
+        UpdateBadge();
         if (_tray is not null)
-        {
-            _tray.Icon = IconRenderer.Render(snapshot.MaxUtilization);
             _tray.ToolTipText = BuildTooltip(snapshot);
-        }
         _flyout?.Update(snapshot);
     }
+
+    /// <summary>Re-render the tray badge from the last snapshot and the chosen source.</summary>
+    private void UpdateBadge()
+    {
+        if (_tray is null) return;
+        double? value = _lastSnapshot is null
+            ? null
+            : BadgeValue(_lastSnapshot, _settings.BadgeSource);
+        _tray.Icon = IconRenderer.Render(value);
+    }
+
+    private static double? BadgeValue(UsageSnapshot s, BadgeSource source) => source switch
+    {
+        BadgeSource.FiveHour => s.FiveHour?.Utilization,
+        BadgeSource.Weekly => s.SevenDay?.Utilization,
+        _ => s.MaxUtilization,
+    };
 
     private static string BuildTooltip(UsageSnapshot s)
     {
@@ -143,6 +161,27 @@ public partial class App : Application
         }
         menu.Items.Add(interval);
 
+        var badge = new MenuItem { Header = "Badge shows" };
+        foreach (var (label, src) in new[]
+                 {
+                     ("Highest", BadgeSource.Highest),
+                     ("5-hour session", BadgeSource.FiveHour),
+                     ("Weekly", BadgeSource.Weekly),
+                 })
+        {
+            var item = new MenuItem
+            {
+                Header = label,
+                IsCheckable = true,
+                IsChecked = _settings.BadgeSource == src,
+            };
+            var captured = src;
+            item.Click += (_, _) => SetBadgeSource(captured);
+            _badgeItems.Add((item, src));
+            badge.Items.Add(item);
+        }
+        menu.Items.Add(badge);
+
         menu.Items.Add(new Separator());
 
         var quit = new MenuItem { Header = "Quit" };
@@ -158,6 +197,14 @@ public partial class App : Application
         _settings.Save();
         if (_timer is not null) _timer.Interval = TimeSpan.FromSeconds(seconds);
         foreach (var (item, s) in _intervalItems) item.IsChecked = s == seconds;
+    }
+
+    private void SetBadgeSource(BadgeSource source)
+    {
+        _settings.BadgeSource = source;
+        _settings.Save();
+        foreach (var (item, s) in _badgeItems) item.IsChecked = s == source;
+        UpdateBadge();
     }
 
     private void QuitApp()

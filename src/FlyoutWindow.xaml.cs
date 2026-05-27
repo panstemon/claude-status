@@ -102,11 +102,30 @@ public partial class FlyoutWindow : Window
         UpdateLayout();
 
         var wa = SystemParameters.WorkArea;
-        Left = wa.Right - Width + 8;
-        Top = wa.Bottom - ActualHeight + 8;
 
+        // Anchor to the tray icon: center horizontally on the cursor, sit just
+        // above the taskbar. Fall back to the corner if the cursor is unavailable.
+        double anchorX = wa.Right - Width / 2;
+        if (GetCursorPos(out var p))
+        {
+            var src = PresentationSource.FromVisual(this);
+            var toDip = src?.CompositionTarget?.TransformFromDevice ?? Matrix.Identity;
+            anchorX = toDip.Transform(new Point(p.X, p.Y)).X;
+        }
+
+        double left = anchorX - Width / 2;
+        left = Math.Max(wa.Left + 4, Math.Min(left, wa.Right - Width - 4));
+
+        Left = left;
+        Top = wa.Bottom - ActualHeight + 8;
         Activate();
     }
+
+    [System.Runtime.InteropServices.DllImport("user32.dll")]
+    private static extern bool GetCursorPos(out POINT lpPoint);
+
+    [System.Runtime.InteropServices.StructLayout(System.Runtime.InteropServices.LayoutKind.Sequential)]
+    private struct POINT { public int X; public int Y; }
 
     protected override void OnDeactivated(EventArgs e)
     {
