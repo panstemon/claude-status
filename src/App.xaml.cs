@@ -1,6 +1,7 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Threading;
+using Microsoft.Win32;
 using H.NotifyIcon;
 
 namespace ClaudeStatus;
@@ -45,6 +46,9 @@ public partial class App : Application
         };
         _tray.TrayLeftMouseUp += (_, _) => _flyout?.Toggle();
         _tray.ForceCreate();
+
+        // Re-tint the badge immediately when the user switches light/dark theme.
+        SystemEvents.UserPreferenceChanged += OnUserPreferenceChanged;
 
         _timer = new DispatcherTimer
         {
@@ -216,8 +220,15 @@ public partial class App : Application
         Shutdown();
     }
 
+    private void OnUserPreferenceChanged(object? sender, UserPreferenceChangedEventArgs e)
+    {
+        if (e.Category == UserPreferenceCategory.General)
+            Dispatcher.Invoke(UpdateBadge);
+    }
+
     protected override void OnExit(ExitEventArgs e)
     {
+        SystemEvents.UserPreferenceChanged -= OnUserPreferenceChanged;
         _singleInstance?.ReleaseMutex();
         _singleInstance?.Dispose();
         base.OnExit(e);
